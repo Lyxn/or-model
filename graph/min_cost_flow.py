@@ -3,6 +3,8 @@ import time
 
 from ortools.graph.pywrapgraph import SimpleMinCostFlow
 
+MAX_CAPACITY = 1000000000
+
 
 def parse_node(nd_str):
     cols = nd_str.split(",")
@@ -23,7 +25,7 @@ def parse_arc(arc_str):
         cap = int(cols[2])
     else:
         cost = int(cols[1])
-        cap = 100000000000
+        cap = MAX_CAPACITY
     return dst, cap, cost
 
 
