@@ -28,7 +28,7 @@ def print_year_var(vars, year):
 
 def run():
     # Solver
-    solver = pywraplp.Solver('CbcMIP',
+    solver = pywraplp.Solver('mining',
                              pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
     # Context
     num_mine = 4
