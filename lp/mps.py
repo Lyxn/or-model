@@ -70,9 +70,9 @@ def read_mps(filename, solver):
                 var_map[name] = solver.NumVar(lb, ub, name)
 
         # constraint
-        for cname, vars in lhs_map.items():
+        for cname, variables in lhs_map.items():
             lhs = 0
-            for name, a in vars.items():
+            for name, a in variables.items():
                 lhs += var_map[name] * a
             rhs = rhs_map.get(cname, 0)
             op = row_op[cname]

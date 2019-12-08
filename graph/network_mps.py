@@ -81,7 +81,7 @@ def print_flow(nwk):
 
 
 def run():
-    filename = "./data/mps/16_n14.mps"
+    filename = "../data/mps/16_n14.mps"
     start = time.time()
     nwk = read_network(filename)
     print("Network time=%f" % (time.time() - start))

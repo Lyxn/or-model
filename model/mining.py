@@ -18,10 +18,10 @@ def print_variable(variables, mine, year):
         print(out)
 
 
-def print_year_var(vars, year):
+def print_year_var(variables, year):
     out = "Year:"
     for t in range(year):
-        var = vars[t]
+        var = variables[t]
         out += "\t%.3f" % var.solution_value()
     print(out)
 

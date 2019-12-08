@@ -14,13 +14,13 @@ def solver_linear_system(a, b):
                              pywraplp.Solver.CLP_LINEAR_PROGRAMMING)
     num_cols = len(a[0])
     num_rows = len(b)
-    vars = [solver.NumVar(0, solver.Infinity(), "x_%d" % j) for j in range(num_cols)]
+    variables = [solver.NumVar(0, solver.Infinity(), "x_%d" % j) for j in range(num_cols)]
     for k in range(num_rows):
-        lhs = sum(a[k][j] * vars[j] for j in range(num_cols))
+        lhs = sum(a[k][j] * variables[j] for j in range(num_cols))
         solver.Add(lhs == b[k])
     solver.Minimize(0)
     solver.Solve()
-    return [x.solution_value() for x in vars]
+    return [x.solution_value() for x in variables]
 
 
 def run():
@@ -120,28 +120,28 @@ def run():
             out = "cap %d:" % i
             for t in range(1, num_years + 1):
                 caps = sum(yt[(i, l)].solution_value() for l in range(2, t + 1)) + capacity0[i]
-                out = "%s\t%.2f" % (out, caps)
+                out = "\t%.2f" % caps
             print(out)
 
     def print_extra_capacity():
         for i in range(num_industries):
             out = "extra %d:" % i
             for t in range(num_years):
-                out = "%s\t%.2f" % (out, yt[(i, t + 2)].solution_value())
+                out = "\t%.2f" % yt[(i, t + 2)].solution_value()
             print(out)
 
     def print_output():
         for i in range(num_industries):
             out = "output %d:" % i
             for t in range(1, num_years + 1):
-                out = "%s\t%.2f" % (out, xt[(i, t)].solution_value())
+                out += "%s\t%.2f" % xt[(i, t)].solution_value()
             print(out)
 
     def print_stock():
         for i in range(num_industries):
             out = "stock %d:" % i
             for t in range(1, num_years + 1):
-                out = "%s\t%.2f" % (out, st[(i, t)].solution_value())
+                out += "\t%.2f" % st[(i, t)].solution_value()
             print(out)
 
     def print_input(k, prefix="input"):
@@ -151,7 +151,7 @@ def run():
             for j in range(num_industries):
                 lhs += xt[(j, t)].solution_value() * product_mat[k][j] + \
                        yt[(j, t + 1)].solution_value() * capacity_mat[k][j]
-            out = "%s\t%.2f" % (out, lhs)
+            out += "\t%.2f" % lhs
         print(out)
 
     def print_manpower():
