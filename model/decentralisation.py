@@ -17,6 +17,7 @@ def run():
     num_departments = 5
     city_names = ["Bristol", "Brighton", "London"]
 
+    benefits = [[10, 15, 10, 20, 5], [10, 20, 15, 15, 15]]
     quantities = [[0, 1.0, 1.5, 0], [1.4, 1.2, 0], [0, 2.0], [0.7]]
     costs = [[5, 14, 13], [5, 9], [10]]
 
@@ -65,9 +66,14 @@ def run():
                     solver.Add(var <= xv[(k, l)])
                     total_cost += var * quant * cost
                     yv[(i, j, k, l)] = var
-    solver.Minimize(total_cost)
+    total_benefit = 0
+    for i in range(num_cities - 1):
+        for j in range(num_departments):
+            total_benefit += benefits[i][j] * xv[(i, j)]
+    solver.Maximize(total_benefit - total_cost)
     solver.Solve()
     print_solver(solver)
+    print("Total cost %f benefit %f" % (total_cost.solution_value(), total_benefit.solution_value()))
 
     def print_location():
         for i in range(num_cities):
