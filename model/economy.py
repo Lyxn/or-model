@@ -117,24 +117,24 @@ def run():
 
     def print_capacity():
         for i in range(num_industries):
-            out = "cap %d:" % i
+            out = "capacity %d:" % i
             for t in range(1, num_years + 1):
                 caps = sum(yt[(i, l)].solution_value() for l in range(2, t + 1)) + capacity0[i]
-                out = "\t%.2f" % caps
+                out += "\t%.2f" % caps
             print(out)
 
     def print_extra_capacity():
         for i in range(num_industries):
             out = "extra %d:" % i
             for t in range(num_years):
-                out = "\t%.2f" % yt[(i, t + 2)].solution_value()
+                out += "\t%.2f" % yt[(i, t + 2)].solution_value()
             print(out)
 
     def print_output():
         for i in range(num_industries):
             out = "output %d:" % i
             for t in range(1, num_years + 1):
-                out += "%s\t%.2f" % xt[(i, t)].solution_value()
+                out += "\t%.2f" % xt[(i, t)].solution_value()
             print(out)
 
     def print_stock():

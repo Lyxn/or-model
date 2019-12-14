@@ -5,8 +5,6 @@ def print_solver(solver):
     print('Number of variables = %d' % solver.NumVariables())
     print('Number of constraints = %d' % solver.NumConstraints())
     print("Optimal objective value = %f" % solver.Objective().Value())
-    # print("Problem solved in %f milliseconds" % solver.wall_time())
-    # print('Problem solved in %d branch-and-bound nodes' % solver.nodes())
 
 
 def print_variable(variables, mine, year):
