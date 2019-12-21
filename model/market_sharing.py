@@ -9,7 +9,7 @@ def print_solver(solver):
 
 def run():
     # Solver
-    solver = pywraplp.Solver('mining',
+    solver = pywraplp.Solver('market_sharing',
                              pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
     # Context
     num_retails = 23
