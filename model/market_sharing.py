@@ -7,6 +7,7 @@ def print_solver(solver):
     print("Optimal objective value = %f" % solver.Objective().Value())
 
 
+# TODO use a MIQP solver to solve mse problem
 def run():
     # Solver
     solver = pywraplp.Solver('market_sharing',
