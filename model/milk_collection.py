@@ -155,9 +155,9 @@ def run():
                     break
                 visits.add(cur)
                 cycle.append(cur)
-                next = get_next(k, cur, last)
+                nxt = get_next(k, cur, last)
                 last = cur
-                cur = next
+                cur = nxt
             cycles.append(cycle)
         return cycles
 
@@ -216,6 +216,7 @@ def run():
             break
         print_all_subtour(k_subtour)
 
+    print("\nOptimal Dist %f" % solver.Objective().Value())
     print_capacity(k_subtour)
 
 
