@@ -1,5 +1,7 @@
 from ortools.linear_solver import pywraplp
 
+from util import reduce
+
 
 def print_solver(solver):
     print('Number of variables = %d' % solver.NumVariables())
@@ -32,19 +34,14 @@ def get_rev_idx(idxs):
     return rev
 
 
-# TODO methods to get ceilings and roofs
-def run():
-    rhs = 37
-    coefficients = [9, 13, -14, 17, 13, -19, 23, 21]
+def optimize_constraint(coefficients, rhs):
     num = len(coefficients)
-    print_constraint(coefficients, rhs)
     sign = [1 if x > 1 else -1 for x in coefficients]
     rhs_new = rhs - sum(x for x in coefficients if x < 0)
     coef_new = [abs(x) for x in coefficients]
     idxs = argsort(coef_new)
     coef_sort = [coef_new[i] for i in idxs]
     rev_idxs = get_rev_idx(idxs)
-    print_constraint(coef_sort, rhs_new)
 
     def recover_constraint(arr, a0):
         coef_rev = [arr[i] for i in rev_idxs]
@@ -52,58 +49,72 @@ def run():
         rhs_rev = a0 + sum(x for x in coef_rev if x < 0)
         return coef_rev, rhs_rev
 
-    ceilings = [{1, 2, 3}, {1, 2, 4, 8}, {1, 2, 6, 7}, {1, 3, 5, 6}, {2, 3, 4, 6}, {2, 5, 6, 7, 8}]
-    roofs = [{1, 2, 3, 8}, {1, 2, 5, 7}, {1, 3, 4, 7}, {1, 5, 6, 7, 8}, {2, 3, 4, 5}, {3, 4, 6, 7, 8}]
-    coef_opt, rhs_opt = optimize_constraint(num, ceilings, roofs, rhs_new)
-    coef_rev, rhs_rev = recover_constraint(coef_opt, rhs_opt)
+    coef_opt, rhs_opt = reduce_coef(coef_sort, rhs_new)
+    coef_opt_rev, rhs_opt_rev = recover_constraint(coef_opt, rhs_opt)
+    print_constraint(coef_sort, rhs_new)
     print_constraint(coef_opt, rhs_opt)
-    print_constraint(coef_rev, rhs_rev)
+    return coef_opt_rev, rhs_opt_rev
 
 
-def optimize_constraint(num_var, ceilings, roofs, upper):
+def reduce_coef(a, a0):
+    ceilings = reduce.find_ceilings(a, a0)
+    roofs = reduce.find_roofs(a, a0)
+    return solve_reduce_prob(len(a), ceilings, roofs, a0)
+
+
+def solve_reduce_prob(num_var, ceilings, roofs, upper):
     # Solver
     solver = pywraplp.Solver('optimize_constraint',
                              pywraplp.Solver.CLP_LINEAR_PROGRAMMING)
 
     # Variable
-    num_var += 1
-    a = {}
+    b = {}
     for i in range(num_var):
-        a[i] = solver.NumVar(0, upper, "a_%d" % i)
+        b[i] = solver.NumVar(0, upper, "b_%d" % i)
+    b0 = solver.NumVar(0, upper, "b0")
 
     # Constraint
-    for i in range(1, num_var - 1):
-        solver.Add(a[i] >= a[i + 1])
+    for i in range(num_var - 1):
+        solver.Add(b[i] >= b[i + 1])
 
     # ceilings
     for ceiling in ceilings:
-        expr = sum(a[i] for i in ceiling) <= a[0]
+        expr = sum(b[i] for i in ceiling) <= b0
         solver.Add(expr)
     # roofs
     for roof in roofs:
-        expr = sum(a[i] for i in roof) >= a[0] + 1
+        expr = sum(b[i] for i in roof) >= b0 + 1
         solver.Add(expr)
 
     # Object
-    obj = a[0] - a[3] - a[5]
-    # obj = sum(a[i] for i in range(1, num_var))
+    obj = sum(b[i] for i in range(num_var))
     solver.Minimize(obj)
 
     # Solve
     def print_variable():
-        a0 = "a0:\t%d" % a[0].solution_value()
-        print(a0)
-        out = "ai:"
-        for i in range(1, num_var):
-            out += "\t%d" % a[i].solution_value()
-        print(out)
+        out_b0 = "b0:\t%d" % b0.solution_value()
+        print(out_b0)
+        out_bi = "bi:"
+        for i in range(num_var):
+            out_bi += "\t%d" % b[i].solution_value()
+        print(out_bi)
 
     solver.Solve()
-    print_solver(solver)
+    # print_solver(solver)
     # print_variable()
-    rhs = a[0].solution_value()
-    coef = [a[i].solution_value() for i in range(1, num_var)]
+    rhs = b0.solution_value()
+    coef = [b[i].solution_value() for i in range(num_var)]
     return coef, rhs
+
+
+def run():
+    rhs = 37
+    coefficients = [9, 13, -14, 17, 13, -19, 23, 21]
+    # ceilings = [{1, 2, 3}, {1, 2, 4, 8}, {1, 2, 6, 7}, {1, 3, 5, 6}, {2, 3, 4, 6}, {2, 5, 6, 7, 8}]
+    # roofs = [{1, 2, 3, 8}, {1, 2, 5, 7}, {1, 3, 4, 7}, {1, 5, 6, 7, 8}, {2, 3, 4, 5}, {3, 4, 6, 7, 8}]
+    coef_opt, rhs_opt = optimize_constraint(coefficients, rhs)
+    print_constraint(coefficients, rhs)
+    print_constraint(coef_opt, rhs_opt)
 
 
 if __name__ == '__main__':
