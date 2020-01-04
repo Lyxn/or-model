@@ -108,8 +108,42 @@ def test2():
     print(ceilings)
 
 
+def test_list(ai_list, a0_list):
+    num_ieq = len(a0_list)
+    for i in range(num_ieq):
+        a = ai_list[i]
+        a0 = a0_list[i]
+        roofs = find_roofs(a, a0)
+        print("a = %s a0 = %d" % (a, a0))
+        print("roofs:\t", roofs)
+        ceilings = find_ceilings(a, a0)
+        print("ceilings:\t", ceilings)
+
+
+def test3():
+    a0_list = [6, 5, 4, 6]
+    ai_list = [
+        [4, 2, 2, 1, 1, 1],
+        [5, 2, 2, 1, 1, 0],
+        [4, 1, 1, 1, 1, 1],
+        [2, 2, 1, 1, 1, 1],
+    ]
+    test_list(ai_list, a0_list)
+
+
+def test4():
+    a0_list = [6, 1, 4, 2]
+    ai_list = [
+        [4, 2, 2, 1, 0],
+        [1, 1, 0, 0, 0],
+        [4, 3, 2, 2],
+        [2, 1, 1, 0],
+    ]
+    test_list(ai_list, a0_list)
+
+
 if __name__ == '__main__':
     start = time.time()
-    test2()
+    test4()
     time_cost = time.time() - start
     print("time cost %f" % time_cost)

@@ -14,7 +14,7 @@ def print_constraint(coefficients, rhs, fmt=lambda x: "%d" % x):
     expr = "%s*x%d" % (fmt(coefficients[idx]), idx + 1)
     for i in range(1, len(coefficients)):
         a = coefficients[i]
-        if a > 0:
+        if a >= 0:
             expr += " + %s*x%d" % (fmt(a), i + 1)
         elif a < 0:
             expr += " - %s*x%d" % (fmt(-a), i + 1)
@@ -51,6 +51,7 @@ def optimize_constraint(coefficients, rhs):
 
     coef_opt, rhs_opt = reduce_coef(coef_sort, rhs_new)
     coef_opt_rev, rhs_opt_rev = recover_constraint(coef_opt, rhs_opt)
+    print("positive ordered inequality")
     print_constraint(coef_sort, rhs_new)
     print_constraint(coef_opt, rhs_opt)
     return coef_opt_rev, rhs_opt_rev
@@ -117,5 +118,26 @@ def run():
     print_constraint(coef_opt, rhs_opt)
 
 
+def run1():
+    a0_list = [80, 96, 20, 36, 44, 48, 24]
+    ai_list = [
+        [8, 12, 13, 64, 22, 41],
+        [8, 12, 13, 75, 22, 41],
+        [3, 6, 4, 18, 6, 4],
+        [5, 10, 8, 32, 6, 12],
+        [5, 13, 8, 42, 6, 20],
+        [5, 13, 8, 48, 6, 20],
+        [3, 2, 4, 8, 8, 4],
+    ]
+    num_ieq = len(a0_list)
+    for i in range(num_ieq):
+        a0 = a0_list[i]
+        ai = ai_list[i]
+        print("inequality %s" % i)
+        bi, b0 = optimize_constraint(ai, a0)
+        print_constraint(ai, a0)
+        print_constraint(bi, b0)
+
+
 if __name__ == '__main__':
-    run()
+    run1()
