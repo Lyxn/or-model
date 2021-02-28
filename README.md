@@ -1,4 +1,4 @@
-# or-demo
+# or-model
 
 This is a demo for modeling and solving problems in operations research.
 
